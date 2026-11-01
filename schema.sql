@@ -30,3 +30,17 @@ CREATE TABLE IF NOT EXISTS audio_sessions (
  started_at timestamptz NOT NULL DEFAULT now(),
  updated_at timestamptz NOT NULL DEFAULT now()
 );
+
+-- Dettagli delle nuove visite; creata automaticamente anche dall'applicazione.
+CREATE TABLE IF NOT EXISTS visit_sessions (
+ id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+ session_id uuid NOT NULL UNIQUE,
+ visitor text NOT NULL,
+ device text NOT NULL,
+ browser text NOT NULL,
+ os text NOT NULL,
+ entered_at timestamptz NOT NULL DEFAULT now(),
+ last_activity_at timestamptz NOT NULL DEFAULT now(),
+ last_seen_at timestamptz NOT NULL DEFAULT now(),
+ active_seconds integer NOT NULL DEFAULT 0
+);
