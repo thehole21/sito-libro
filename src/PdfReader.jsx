@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { getDocument, GlobalWorkerOptions } from 'pdfjs-dist';
 import worker from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
+import { loadBook } from './load-book.js';
 GlobalWorkerOptions.workerSrc = worker;
 
 export default function PdfReader() {
@@ -14,7 +15,7 @@ export default function PdfReader() {
 
   useEffect(() => {
     let active = true;
-    const task = getDocument('/libro.pdf');
+    const task = loadBook(getDocument);
     task.promise.then(document => { if (active) setPdf(document); }).catch(() => {
       if (active) setStatus('Il lettore non è disponibile. Puoi aprire o scaricare il PDF.');
     });
