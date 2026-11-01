@@ -1,17 +1,24 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { getDocument, GlobalWorkerOptions } from 'pdfjs-dist';
-import worker from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
+import { getDocument, GlobalWorkerOptions } from 'pdfjs-dist/legacy/build/pdf.mjs';
+import worker from 'pdfjs-dist/legacy/build/pdf.worker.min.mjs?url';
 import { loadBook } from './load-book.js';
+import { rasterScale } from './pdf-scale.js';
 GlobalWorkerOptions.workerSrc = worker;
 
 export default function PdfReader() {
   const [pdf, setPdf] = useState(null);
   const [page, setPage] = useState(1);
+  const [pageDraft, setPageDraft] = useState('1');
   const [zoom, setZoom] = useState(1);
   const [width, setWidth] = useState(0);
   const [status, setStatus] = useState('Caricamento del libro…');
   const paperRef = useRef(null);
   const canvasRef = useRef(null);
+  useEffect(() => { setPageDraft(String(page)); }, [page]);
+  function goToPage() {
+    const next = Math.max(1, Math.min(pdf?.numPages || 1, Number.parseInt(pageDraft, 10) || 1));
+    setPage(next); setPageDraft(String(next));
+  }
 
   useEffect(() => {
     let active = true;
@@ -42,7 +49,7 @@ export default function PdfReader() {
         const base = pdfPage.getViewport({ scale: 1 });
         const scale = Math.min(Math.max(width - 12, 100) / base.width, 1.45) * zoom;
         const viewport = pdfPage.getViewport({ scale });
-        const ratio = Math.min(window.devicePixelRatio || 1, 2);
+        const ratio = rasterScale(viewport.width, viewport.height, window.devicePixelRatio || 1);
         buffer.width = Math.ceil(viewport.width * ratio);
         buffer.height = Math.ceil(viewport.height * ratio);
         task = pdfPage.render({ canvasContext: buffer.getContext('2d'), viewport, transform: [ratio, 0, 0, ratio, 0, 0] });
@@ -67,7 +74,7 @@ export default function PdfReader() {
     <div className="section-title"><div><p className="eyebrow">01 / IL LIBRO</p><h2>Una pagina alla volta.</h2></div><a className="download" href="/libro.pdf" target="_blank" rel="noopener">Apri PDF ↗</a></div>
     <div className="reader"><div className="toolbar">
       <button disabled={!pdf || page === 1} onClick={() => setPage(p => p - 1)} aria-label="Pagina precedente">←</button>
-      <label>Pagina <input type="number" min="1" max={pdf?.numPages || 1} value={page} disabled={!pdf} aria-label="Numero di pagina" onChange={event => setPage(Math.max(1, Math.min(pdf.numPages, Number.parseInt(event.target.value, 10) || 1)))} /> <span>/ {pdf?.numPages || '…'}</span></label>
+      <label>Pagina <input type="text" inputMode="numeric" pattern="[0-9]*" value={pageDraft} disabled={!pdf} aria-label="Numero di pagina" onChange={event => setPageDraft(event.target.value.replace(/\D/g,''))} onBlur={goToPage} onKeyDown={event=>{if(event.key==='Enter'){goToPage();event.currentTarget.blur();}}} /> <span>/ {pdf?.numPages || '…'}</span></label>
       <button disabled={!pdf || page === pdf.numPages} onClick={() => setPage(p => p + 1)} aria-label="Pagina successiva">→</button>
       <span className="spacer" />
       <button disabled={zoom <= .75} onClick={() => setZoom(z => z - .25)} aria-label="Riduci zoom">−</button>

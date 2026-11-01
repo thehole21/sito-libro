@@ -15,3 +15,18 @@ CREATE TABLE IF NOT EXISTS visits (
 -- Manutenzione facoltativa: elimina le chiavi antispam scadute.
 -- DELETE FROM comment_limits WHERE last_at < now()-interval '2 days';
 -- Per eliminare un commento: DELETE FROM comments WHERE id = ID_DA_ELIMINARE;
+
+-- Ascolti audiolibro: creata automaticamente anche dall'applicazione.
+CREATE TABLE IF NOT EXISTS audio_sessions (
+ session_id uuid PRIMARY KEY,
+ book text NOT NULL,
+ visitor text NOT NULL,
+ device text NOT NULL,
+ browser text NOT NULL,
+ os text NOT NULL,
+ duration double precision NOT NULL,
+ listened double precision NOT NULL DEFAULT 0,
+ completed boolean NOT NULL DEFAULT false,
+ started_at timestamptz NOT NULL DEFAULT now(),
+ updated_at timestamptz NOT NULL DEFAULT now()
+);

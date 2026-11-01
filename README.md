@@ -31,3 +31,9 @@ La procedura completa e i limiti tecnici sono in [LEGGIMI.md](LEGGIMI.md).
 ## Commenti privati
 
 I visitatori possono inviare nome e commento, visibili solo al proprietario. Per leggerli apri `/api/admin` e seleziona **Leggi i commenti privati**, oppure visita `/api/admin-comments`. Usa utente `admin` e `ADMIN_PASSWORD`. Non servono modifiche allo schema del database.
+
+## Audiolibro e statistiche di ascolto
+
+Il file unificato è in public/audiolibro.m4a; l'ordine delle 12 parti originali è documentato in AUDIO.md. Il player registra le parti riprodotte, non solo la posizione raggiunta. In /api/admin sono visibili contatori e ultimi 100 dispositivi stimati, browser, sistema, sessioni, percentuale massima riprodotta e stato completo/parziale del mese. Completo significa almeno 98% in una sessione; sessioni diverse non si sommano. Un download o l'ascolto fuori dal player non vengono misurati. Il nome personale del dispositivo non è disponibile.
+
+La tabella audio_sessions viene creata automaticamente usando DATABASE_URL. Se il ruolo Postgres non dispone del permesso CREATE, eseguire il nuovo schema.sql in Neon. Gli identificativi sono pseudonimi mensili, non identificativi hardware. La telemetria può essere incompleta in caso di blocchi di rete o chiusura forzata del browser; non dimostra attenzione o ascolto effettivo della persona. Le informazioni sono riservate all'amministratore.

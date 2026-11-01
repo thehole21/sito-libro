@@ -4,6 +4,15 @@ import { createServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
 import { getDocument } from 'pdfjs-dist/legacy/build/pdf.mjs';
 import { loadBook } from './src/load-book.js';
+import { rasterScale } from './src/pdf-scale.js';
+
+test('phone and tablet PDF zoom keep the raster within a bounded memory budget',()=>{
+  for(const [width,height,dpr] of [[350,500,3],[1200,1700,3],[2600,3700,2]]){
+    const scale=rasterScale(width,height,dpr);
+    assert.ok(width*height*scale*scale<=4000001);
+    assert.ok(scale>0&&scale<=2);
+  }
+});
 
 test('book loads through its URL and renders consecutive pages with PDF.js', async () => {
   const bytes = await readFile(new URL('./public/libro.pdf', import.meta.url));
