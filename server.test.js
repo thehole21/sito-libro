@@ -1,0 +1,8 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {authorized,escapeHtml,fingerprint,device,sameOrigin} from './lib/server.js';
+import admin from './api/admin.js';
+test('admin rejects missing and incorrect credentials, accepts exact secret',()=>{process.env.ADMIN_PASSWORD='a-very-long-test-password';assert.equal(authorized({headers:{}}),false);assert.equal(authorized({headers:{authorization:'Basic '+Buffer.from('admin:wrong').toString('base64')}}),false);assert.equal(authorized({headers:{authorization:'Basic '+Buffer.from('admin:a-very-long-test-password').toString('base64')}}),true)});
+test('admin endpoint challenges before accessing database',async()=>{const headers={};const res={setHeader:(k,v)=>headers[k]=v,status(n){this.code=n;return this},send(v){this.body=v;return this}};await admin({headers:{},method:'GET'},res);assert.equal(res.code,401);assert.match(headers['WWW-Authenticate'],/^Basic/);assert.equal(headers['Cache-Control'],'no-store')});
+test('visitor hash is pseudonymous and rotates by month',()=>{process.env.ANALYTICS_SECRET='x'.repeat(40);const req={headers:{'x-vercel-forwarded-for':'192.0.2.1','user-agent':'test'}};assert.equal(fingerprint(req,'2026-11'),fingerprint(req,'2026-11'));assert.notEqual(fingerprint(req,'2026-11'),fingerprint(req,'2026-12'));assert.match(fingerprint(req),/^[a-f0-9]{64}$/)});
+test('escaping and origin checks',()=>{assert.equal(escapeHtml('<script>"&'), '&lt;script&gt;&quot;&amp;');assert.equal(sameOrigin({headers:{origin:'https://evil.example',host:'book.example'}}),false);assert.equal(device({headers:{'user-agent':'iPhone Mobile'}}),'Telefono')});
