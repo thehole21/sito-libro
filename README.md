@@ -27,3 +27,7 @@ npm test
 `src/` contiene i componenti React. `api/` contiene le funzioni Node.js. `public/` contiene PDF, copertina e configurazione audio. Non pubblicare `.env.local`, `node_modules/` o credenziali.
 
 La procedura completa e i limiti tecnici sono in [LEGGIMI.md](LEGGIMI.md).
+
+## Commenti privati
+
+I visitatori possono inviare nome e commento, visibili solo al proprietario. Per leggerli apri `/api/admin` e seleziona **Leggi i commenti privati**, oppure visita `/api/admin-comments`. Usa utente `admin` e `ADMIN_PASSWORD`. Non servono modifiche allo schema del database.

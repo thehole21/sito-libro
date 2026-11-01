@@ -26,7 +26,7 @@ Quando disponibile, aggiungi `audiolibro.mp3` in `public` e cambia `public/confi
 
 ## Commenti
 
-Pubblici, con nome e testo, senza registrazione. Il testo viene mostrato come testo semplice (HTML non eseguibile). Nessun `maxlength` nel campo commento; rimane un limite tecnico di sicurezza di **1 MB per invio**, con messaggio per dividere testi più grandi. Nessun sistema può accettare una lunghezza letteralmente infinita. Un invio ogni 30 secondi per IP/browser e un campo antispam invisibile riducono lo spam; non sostituiscono un servizio antibot per siti ad alto traffico. Gli altri commenti si caricano con il pulsante dedicato. Per moderare, usa il SQL Editor di Neon: `SELECT id,name,created_at FROM comments ORDER BY id DESC;` e `DELETE FROM comments WHERE id = ...;`.
+Privati, con nome e testo, senza registrazione. Solo il proprietario può leggerli tramite `/api/admin-comments`, con le stesse credenziali delle statistiche. La pagina `/api/admin` contiene il collegamento. Anche i commenti già presenti sono ora riservati; il sito pubblico non espone più alcuna API di lettura. Il testo viene mostrato come testo semplice (HTML non eseguibile). Nessun `maxlength` nel campo commento; rimane un limite tecnico di sicurezza di **1 MB per invio**, con messaggio per dividere testi più grandi. Nessun sistema può accettare una lunghezza letteralmente infinita. Un invio ogni 30 secondi per IP/browser e un campo antispam invisibile riducono lo spam; non sostituiscono un servizio antibot per siti ad alto traffico. Nell’area riservata i commenti si sfogliano con il collegamento ai precedenti. Per moderare, usa il SQL Editor di Neon: `SELECT id,name,created_at FROM comments ORDER BY id DESC;` e `DELETE FROM comments WHERE id = ...;`.
 
 ## Sviluppo e verifiche
 
